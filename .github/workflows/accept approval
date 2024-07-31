@@ -1,0 +1,21 @@
+name: Publish Approved Package
+on:
+  issues:
+    types: [labeled]
+jobs:
+  publish:
+    if: github.event.label.name == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+      - name: Publish JUnit
+        run: |
+          curl -LO https://repo1.maven.org/maven2/org/junit/junit/10.0/junit-10.0.jar
+          mvn deploy:deploy-file -Durl=https://maven.pkg.github.com/your-org/your-repo -DrepositoryId=github -Dfile=junit-10.0.jar -DgroupId=org.junit -DartifactId=junit -Dversion=10.0 -Dpackaging=jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
