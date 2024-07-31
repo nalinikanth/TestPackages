@@ -1,0 +1,17 @@
+name: Package Approval Request
+on:
+  issues:
+    types: [opened]
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for package request
+        if: contains(github.event.issue.title, 'Package Request')
+        run: echo "Package request received for ${{ github.event.issue.body }}"
+      - name: Add 'needs approval' label
+        if: contains(github.event.issue.title, 'Package Request')
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: 'needs approval'
